@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="uz" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIRZO DENTAL STUDIO — Raqamli Stomatologiya va Implantologiya | Samarqand</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#0F172A',
+            slateMuted: '#475569',
+            alabaster: '#F8FAFC',
+            hairline: '#E2E8F0',
+            surgical: '#0D9488',
+            surgicalDark: '#0F766E',
+            surgicalLight: '#F0FDFA',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #FFFFFF;
+      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Subtle surgical grid background for Hero */
+    .clinical-grid {
+      background-image: 
+        linear-gradient(to right, rgba(226, 232, 240, 0.55) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.55) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Custom Dental Arch Tooth Hover & Active States */
+    .tooth-node {
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+    .tooth-node:hover rect,
+    .tooth-node:hover path {
+      stroke: #0D9488;
+      fill: #F0FDFA;
+    }
+    .tooth-node.selected rect,
+    .tooth-node.selected path {
+      fill: #0D9488;
+      stroke: #0F766E;
+    }
+    .tooth-node.selected text {
+      fill: #FFFFFF;
+      font-weight: 700;
+    }
+
+    /* Print Ticket Styling */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-ticket-area, #printable-ticket-area * {
+        visibility: visible;
+      }
+      #printable-ticket-area {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        border: 1px solid #0F172A;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white text-ink selection:bg-surgical selection:text-white">
+
+  <!-- ==================== 1. TOP UTILITY & STICKY NAVIGATION ==================== -->
+  <div class="bg-alabaster border-b border-hairline text-xs text-slateMuted">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-9 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <span class="inline-flex items-center gap-2 font-medium text-ink">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+          </span>
+          Bugun ochiq: <span class="font-mono font-semibold">09:00 – 20:00</span>
+        </span>
+        <span class="hidden md:inline text-hairline">|</span>
+        <span class="hidden md:inline">Samarqand sh., Universitet xiyoboni, 14-uy</span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button onclick="openMyBookingsDrawer()" class="inline-flex items-center gap-1.5 font-medium text-ink hover:text-surgical transition">
+          <svg class="w-3.5 h-3.5 text-surgical" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          <span>Mening yozuvlarim</span>
+          <span id="saved-bookings-count" class="font-mono text-[11px] px-1.5 py-0.2 rounded bg-slate-200 text-ink font-semibold">0</span>
+        </button>
+        <span class="text-hairline">|</span>
+        <a href="tel:+998662354812" class="font-mono font-semibold text-ink hover:text-surgical transition">
+          +998 66 235-48-12
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-hairline">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3.5 flex items-center justify-between">
+      <!-- Brand Identity -->
+      <a href="#" class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-ink text-white flex items-center justify-center border border-slate-800">
+          <!-- Architectural Tooth / Cross Precision SVG -->
+          <svg class="w-5 h-5 text-surgical" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M3 12h18M7.5 7.5l9 9M16.5 7.5l-9 9" />
+          </svg>
+        </div>
+        <div>
+          <span class="font-bold text-base sm:text-lg tracking-tight text-ink block leading-none">
+            MIRZO DENTAL STUDIO
+          </span>
+          <span class="font-mono text-[10px] uppercase tracking-widest text-slateMuted block mt-1">
+            Raqamli Stomatologiya • Est. 2026
+          </span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-slateMuted">
+        <a href="#calculator" class="hover:text-ink transition">Narx kalkulyatori</a>
+        <a href="#dental-map" class="hover:text-ink transition">Tish formulasi</a>
+        <a href="#doctors" class="hover:text-ink transition">Shifokorlar</a>
+        <a href="#sterilization" class="hover:text-ink transition">Sterilizatsiya protokoli</a>
+        <a href="#booking" class="hover:text-ink transition">Qabulga yozilish</a>
+      </nav>
+
+      <!-- CTA Group -->
+      <div class="flex items-center gap-2.5">
+        <a href="#booking" class="px-4 py-2.5 rounded-lg bg-surgical hover:bg-surgicalDark text-white text-xs sm:text-sm font-semibold transition shadow-sm">
+          Qabulga yozilish
+        </a>
+        <button onclick="toggleMobileNav()" class="lg:hidden p-2 rounded-lg border border-hairline text-ink hover:bg-alabaster" aria-label="Menyu">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-nav" class="hidden lg:hidden border-t border-hairline bg-white px-4 py-4 space-y-2 text-sm font-medium">
+      <a href="#calculator" onclick="toggleMobileNav()" class="block px-3 py-2 rounded-lg hover:bg-alabaster text-ink">Narx kalkulyatori</a>
+      <a href="#dental-map" onclick="toggleMobileNav()" class="block px-3 py-2 rounded-lg hover:bg-alabaster text-ink">Tish formulasi (32 tish)</a>
+      <a href="#doctors" onclick="toggleMobileNav()" class="block px-3 py-2 rounded-lg hover:bg-alabaster text-ink">Shifokorlar tarkibi</a>
+      <a href="#sterilization" onclick="toggleMobileNav()" class="block px-3 py-2 rounded-lg hover:bg-alabaster text-ink">Sterilizatsiya protokoli</a>
+      <a href="#booking" onclick="toggleMobileNav()" class="block px-3 py-2 rounded-lg bg-surgicalLight text-surgicalDark font-semibold">Qabulga yozilish</a>
+    </div>
+  </header>
+
+  <!-- ==================== 2. ASYMMETRIC CLINICAL HERO SECTION ==================== -->
+  <section class="clinical-grid border-b border-hairline py-12 lg:py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+        
+        <!-- Left Column: Clinical Value Proposition (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white border border-hairline text-xs font-mono text-slateMuted">
+            <span class="w-2 h-2 rounded-full bg-surgical"></span>
+            <span>SAMARQAND • RAQAMLI DIAGNOSTIKA VA MIKROSKOPIYA MARKAZI</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-5xl lg:text-[52px] font-extrabold tracking-tight text-ink leading-[1.12]">
+            Raqamli diagnostika va og‘riqsiz stomatologiya — Samarqandda yangi standart.
+          </h1>
+
+          <p class="text-base sm:text-lg text-slateMuted leading-relaxed max-w-2xl">
+            Yangi ochilgan klinikamizda davolash jarayoni taxminlarga emas, aniq klinik protokollarga asoslanadi: <strong class="text-ink font-semibold">3D CBCT kompyuter tomografiyasi</strong>, <strong class="text-ink font-semibold">Carl Zeiss</strong> optik mikroskopi ostida ildiz kanallarini davolash va Yevropa <strong class="text-ink font-semibold">B-sinf avtoklav</strong> sterilizatsiyasi.
+          </p>
+
+          <!-- Primary & Secondary CTA -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
+            <a href="#booking" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-ink hover:bg-slate-800 text-white text-sm font-semibold transition">
+              <span>Shifokor qabuliga yozilish</span>
+              <svg class="w-4 h-4 text-surgical" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+            <a href="#calculator" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-white hover:bg-alabaster border border-hairline text-ink text-sm font-semibold transition">
+              <svg class="w-4 h-4 text-surgical" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              <span>Davolash narxini hisoblash</span>
+            </a>
+          </div>
+
+          <!-- Technical Specifications Strip -->
+          <div class="grid grid-cols-3 gap-4 pt-6 border-t border-hairline">
+            <div>
+              <div class="font-mono text-lg sm:text-xl font-bold text-ink">25x</div>
+              <div class="text-xs text-slateMuted mt-0.5">Carl Zeiss mikroskop kattalashtirishi</div>
+            </div>
+            <div>
+              <div class="font-mono text-lg sm:text-xl font-bold text-ink">0.08 mm</div>
+              <div class="text-xs text-slateMuted mt-0.5">3D CBCT tomografiya aniqligi</div>
+            </div>
+            <div>
+              <div class="font-mono text-lg sm:text-xl font-bold text-surgical">100%</div>
+              <div class="text-xs text-slateMuted mt-0.5">B-sinf avtoklav (134°C) nazorati</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Quick-Triage Widget (5 cols) -->
+        <div class="lg:col-span-5 bg-white rounded-xl border border-hairline shadow-sm p-6 sm:p-7">
+          <div class="flex items-center justify-between pb-4 border-b border-hairline">
+            <div>
+              <span class="font-mono text-[11px] uppercase tracking-wider text-surgical font-semibold">Tezkor yo‘naltiruvchi</span>
+              <h2 class="text-lg font-bold text-ink mt-0.5">Sizni nima bezovta qilmoqda?</h2>
+            </div>
+            <span class="font-mono text-xs text-slateMuted bg-alabaster px-2.5 py-1 rounded border border-hairline">1-qadam</span>
+          </div>
+
+          <!-- Symptom / Need Selector Pills -->
+          <div id="triage-options" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Dynamic Clinical Recommendation Output -->
+          <div id="triage-result" class="mt-5 p-4 rounded-lg bg-alabaster border border-hairline space-y-3.5">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 3. TREATMENT & PRICE CALCULATOR + DENTAL ARCH ==================== -->
+  <section id="calculator" class="py-16 lg:py-24 bg-white border-b border-hairline">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-8 border-b border-hairline">
+        <div>
+          <span class="font-mono text-xs uppercase tracking-wider text-surgical font-semibold">Shaffof narx siyosati</span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-ink tracking-tight mt-1">Davolash smetasi kalkulyatori</h2>
+        </div>
+        <p class="text-sm text-slateMuted max-w-md">
+          Kerakli muolajalarni tanlang, miqdorini belgilang va taxminiy davolash rejasini bir tugma bilan qabulga biriktiring.
+        </p>
+      </div>
+
+      <!-- Category Filter Bar -->
+      <div id="calc-categories" class="flex items-center gap-2 overflow-x-auto py-6">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Calculator Split Layout: Procedures List (7 cols) + Live Estimate Receipt (5 cols) -->
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left: Procedures Table / Cards -->
+        <div class="lg:col-span-7 space-y-3" id="procedures-list">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Right: Live Itemized Clinical Estimate -->
+        <div class="lg:col-span-5 lg:sticky lg:top-24 bg-alabaster rounded-xl border border-hairline p-6 space-y-5">
+          <div class="flex items-center justify-between pb-3.5 border-b border-hairline">
+            <div>
+              <h3 class="font-bold text-base text-ink">Dastlabki davolash smetasi</h3>
+              <span class="text-xs text-slateMuted">Barcha narxlar so‘mda (UZS) ko‘rsatilgan</span>
+            </div>
+            <button onclick="clearCalculator()" class="text-xs font-medium text-slateMuted hover:text-red-600 transition">
+              Tozalash
+            </button>
+          </div>
+
+          <!-- Selected Items List -->
+          <div id="estimate-items" class="space-y-3 max-h-72 overflow-y-auto pr-1">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Selected Teeth Pill Summary -->
+          <div id="estimate-teeth-box" class="hidden p-3 rounded-lg bg-white border border-hairline">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slateMuted font-medium">Belgilangan tishlar (FDI):</span>
+              <span id="estimate-teeth-list" class="font-mono font-bold text-surgical"></span>
+            </div>
+          </div>
+
+          <!-- Installment Option Toggle (3-month 0% split) -->
+          <div class="p-3.5 rounded-lg bg-white border border-hairline flex items-center justify-between gap-3">
+            <div>
+              <span class="text-xs font-semibold text-ink block">3 oylik bo‘lib to‘lash (0% foizsiz)</span>
+              <span class="text-[11px] text-slateMuted">Klinik ichki muddatli to‘lov rejasi</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="installment-toggle" onchange="renderEstimate()" class="sr-only peer">
+              <div class="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-surgical"></div>
+            </label>
+          </div>
+
+          <!-- Totals Breakdown -->
+          <div class="pt-3 border-t border-hairline space-y-2">
+            <div class="flex items-center justify-between text-xs text-slateMuted">
+              <span>Birlamchi ko‘rik va konsultatsiya:</span>
+              <span class="font-mono font-semibold text-surgical">Bepul (0 so'm)</span>
+            </div>
+            <div class="flex items-center justify-between text-base font-bold text-ink pt-1">
+              <span>Umumiy smeta:</span>
+              <span id="estimate-total" class="font-mono text-xl text-ink tabular-nums">0 so'm</span>
+            </div>
+            <div id="installment-breakdown" class="hidden flex items-center justify-between text-xs bg-surgicalLight text-surgicalDark px-3 py-2 rounded-md font-medium">
+              <span>Oylik to‘lov (3 oy davomida):</span>
+              <span id="installment-monthly" class="font-mono font-bold tabular-nums">0 so'm / oy</span>
+            </div>
+          </div>
+
+          <button onclick="transferEstimateToBooking()" class="w-full py-3.5 px-4 rounded-lg bg-surgical hover:bg-surgicalDark text-white text-sm font-semibold transition flex items-center justify-center gap-2">
+            <span>Ushbu smeta bilan qabulga yozilish</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 4. INTERACTIVE FDI DENTAL ARCH SELECTOR ==================== -->
+  <section id="dental-map" class="py-16 bg-alabaster border-b border-hairline">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-12 gap-8 items-center">
+        
+        <div class="lg:col-span-5 space-y-4">
+          <span class="font-mono text-xs uppercase tracking-wider text-surgical font-semibold">Xalqaro FDI tish sxemasi</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight">Qaysi tishingizda muammo bor?</h2>
+          <p class="text-sm text-slateMuted leading-relaxed">
+            Sxemadan bezovta qilayotgan tish raqamini bosing. Tanlangan tish raqamlari avtomatik ravishda shifokor qabuliga yozilish chiptangizga biriktiriladi.
+          </p>
+
+          <div class="p-4 rounded-lg bg-white border border-hairline space-y-2.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slateMuted font-medium">Tanlangan tishlar:</span>
+              <button onclick="clearSelectedTeeth()" class="text-xs text-slateMuted hover:text-ink underline">Tozalash</button>
+            </div>
+            <div id="selected-teeth-badges" class="flex flex-wrap gap-1.5 min-h-[28px] items-center">
+              <span class="text-xs text-slateMuted italic">Hali tish tanlanmagan</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Minimalist Interactive SVG Dental Arch (32 Teeth FDI Notation) -->
+        <div class="lg:col-span-7 bg-white rounded-xl border border-hairline p-5 sm:p-7">
+          <div class="flex items-center justify-between text-[11px] font-mono text-slateMuted mb-3">
+            <span>O‘NG TOMON (Q1 / Q4)</span>
+            <span class="text-ink font-semibold">YUQORI VA PASTKI JAG‘</span>
+            <span>CHAP TOMON (Q2 / Q3)</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <svg id="dental-arch-svg" viewBox="0 0 680 250" class="w-full min-w-[540px] h-auto select-none">
+              <!-- Center Midline -->
+              <line x1="340" y1="15" x2="340" y2="235" stroke="#E2E8F0" stroke-width="1.5" stroke-dasharray="4 4" />
+              <line x1="20" y1="125" x2="660" y2="125" stroke="#E2E8F0" stroke-width="1.5" />
+
+              <!-- Quadrant Labels -->
+              <text x="24" y="24" fill="#94A3B8" font-size="10" font-family="JetBrains Mono">YUQORI O‘NG</text>
+              <text x="580" y="24" fill="#94A3B8" font-size="10" font-family="JetBrains Mono">YUQORI CHAP</text>
+              <text x="24" y="238" fill="#94A3B8" font-size="10" font-family="JetBrains Mono">PASTKI O‘NG</text>
+              <text x="580" y="238" fill="#94A3B8" font-size="10" font-family="JetBrains Mono">PASTKI CHAP</text>
+
+              <!-- Teeth nodes rendered dynamically by JS -->
+              <g id="teeth-layer"></g>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 5. DOCTORS & STERILIZATION TRANSPARENCY ==================== -->
+  <section id="doctors" class="py-16 lg:py-24 bg-white border-b border-hairline">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+      
+      <!-- Doctors Roster -->
+      <div>
+        <div class="max-w-2xl mb-10">
+          <span class="font-mono text-xs uppercase tracking-wider text-surgical font-semibold">Klinik mutaxassislar</span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-ink tracking-tight mt-1">Shifokorlar jamoasi</h2>
+          <p class="text-sm text-slateMuted mt-2">
+            Har bir mutaxassis tor yo‘nalish bo‘yicha xalqaro sertifikat va klinik amaliyotga ega.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6" id="doctors-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- 4-Stage Sterilization Protocol -->
+      <div id="sterilization" class="pt-12 border-t border-hairline">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+          <div>
+            <span class="font-mono text-xs uppercase tracking-wider text-surgical font-semibold">Infeksion xavfsizlik</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight mt-1">4 bosqichli sterilizatsiya protokoli</h2>
+          </div>
+          <span class="font-mono text-xs px-3 py-1.5 rounded bg-surgicalLight text-surgicalDark font-semibold border border-teal-200">
+            EN 13060 / B-SINF STANDARTI
+          </span>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div class="p-5 rounded-xl bg-alabaster border border-hairline space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs font-bold text-surgical">BOSQICH 01</span>
+              <span class="font-mono text-xs text-slateMuted">15 daq</span>
+            </div>
+            <h3 class="font-bold text-base text-ink">Ultratovushli dezinfeksiya</h3>
+            <p class="text-xs text-slateMuted leading-relaxed">
+              Asboblar maxsus enzimatik eritmada ultratovush to‘lqinlari yordamida mikroskopik qoldiqlardan tozalanadi.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-alabaster border border-hairline space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs font-bold text-surgical">BOSQICH 02</span>
+              <span class="font-mono text-xs text-slateMuted">Germetik</span>
+            </div>
+            <h3 class="font-bold text-base text-ink">Indikatorli kraft-qadoqlash</h3>
+            <p class="text-xs text-slateMuted leading-relaxed">
+              Har bir to‘plam alohida termopaketga muhrlanadi va kimyoviy sterillik indikatori o‘rnatiladi.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-alabaster border border-hairline space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs font-bold text-surgical">BOSQICH 03</span>
+              <span class="font-mono text-xs text-slateMuted">134°C / 2.1 bar</span>
+            </div>
+            <h3 class="font-bold text-base text-ink">B-sinf vakuumli avtoklav</h3>
+            <p class="text-xs text-slateMuted leading-relaxed">
+              Yevropa avtoklavida yuqori bosim va bug‘ ostida 100% bakteriya va viruslar bartaraf etiladi.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-alabaster border border-hairline space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs font-bold text-surgical">BOSQICH 04</span>
+              <span class="font-mono text-xs text-slateMuted">Shaxsiy</span>
+            </div>
+            <h3 class="font-bold text-base text-ink">Bemor ko‘z o‘ngida ochish</h3>
+            <p class="text-xs text-slateMuted leading-relaxed">
+              Steril paket faqat bemor kresloga o‘tirgandan so‘ng uning guvohligida ochiladi.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== 6. SMART APPOINTMENT BOOKING SYSTEM ==================== -->
+  <section id="booking" class="py-16 lg:py-24 bg-alabaster">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="max-w-2xl mb-10">
+        <span class="font-mono text-xs uppercase tracking-wider text-surgical font-semibold">Onlayn registratura</span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-ink tracking-tight mt-1">Qabulga yozilish</h2>
+        <p class="text-sm text-slateMuted mt-2">
+          Shifokor, sana va qulay vaqtni tanlang. Tasdiqlangandan so‘ng raqamli qabul chiptasi shakllantiriladi.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Booking Form (7 cols) -->
+        <form id="appointment-form" onsubmit="handleBookingSubmit(event)" class="lg:col-span-7 bg-white rounded-xl border border-hairline p-6 sm:p-8 space-y-6">
+          
+          <!-- Step 1: Select Specialist -->
+          <div>
+            <label class="block text-xs font-mono uppercase tracking-wider text-slateMuted font-semibold mb-2.5">
+              1. Mutaxassisni tanlang
+            </label>
+            <div id="booking-doctors-list" class="grid sm:grid-cols-3 gap-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Step 2: Select Date (Dynamic 7 Days) -->
+          <div>
+            <label class="block text-xs font-mono uppercase tracking-wider text-slateMuted font-semibold mb-2.5">
+              2. Qabul sanasi
+            </label>
+            <div id="booking-dates-list" class="grid grid-cols-4 sm:grid-cols-7 gap-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Step 3: Select Time Slot -->
+          <div>
+            <div class="flex items-center justify-between mb-2.5">
+              <label class="block text-xs font-mono uppercase tracking-wider text-slateMuted font-semibold">
+                3. Bo‘sh vaqt oralig‘i
+              </label>
+              <span class="text-[11px] text-slateMuted">Kulrang vaqtlar band qilingan</span>
+            </div>
+            <div id="booking-times-list" class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Step 4: Patient Details -->
+          <div class="grid sm:grid-cols-2 gap-4 pt-2 border-t border-hairline">
+            <div>
+              <label for="patient-name" class="block text-xs font-semibold text-ink mb-1.5">Bemor ism-sharifi *</label>
+              <input 
+                type="text" 
+                id="patient-name" 
+                required 
+                placeholder="Masalan: Jasur Karimov"
+                class="w-full px-3.5 py-2.5 rounded-lg bg-white border border-hairline focus:border-surgical focus:outline-none text-sm text-ink"
+              />
+            </div>
+            <div>
+              <label for="patient-phone" class="block text-xs font-semibold text-ink mb-1.5">Telefon raqam *</label>
+              <input 
+                type="tel" 
+                id="patient-phone" 
+                required 
+                oninput="formatUzbekPhone(this)"
+                placeholder="+998 (90) 123-45-67"
+                maxlength="19"
+                class="w-full px-3.5 py-2.5 rounded-lg bg-white border border-hairline focus:border-surgical focus:outline-none font-mono text-sm text-ink"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label for="patient-note" class="block text-xs font-semibold text-ink mb-1.5">Qo‘shimcha izoh yoki shikoyat (ixtiyoriy)</label>
+            <textarea 
+              id="patient-note" 
+              rows="2" 
+              placeholder="Masalan: Sovuq suv ichganda pastki o‘ng tishda og‘riq bor..."
+              class="w-full px-3.5 py-2.5 rounded-lg bg-white border border-hairline focus:border-surgical focus:outline-none text-sm text-ink"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="w-full py-3.5 px-5 rounded-lg bg-ink hover:bg-slate-800 text-white text-sm font-semibold transition flex items-center justify-center gap-2">
+            <span>Qabulni tasdiqlash va chipta olish</span>
+            <svg class="w-4 h-4 text-surgical" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </button>
+        </form>
+
+        <!-- Live Booking Summary & Clinic Location Card (5 cols) -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <!-- Live Summary Box -->
+          <div class="bg-white rounded-xl border border-hairline p-6 space-y-4">
+            <h3 class="font-bold text-base text-ink pb-3 border-b border-hairline">Tanlangan qabul tafsilotlari</h3>
+            
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between">
+                <span class="text-slateMuted">Shifokor:</span>
+                <span id="summary-doctor" class="font-semibold text-ink text-right">—</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slateMuted">Sana va vaqt:</span>
+                <span id="summary-datetime" class="font-mono font-semibold text-ink">—</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slateMuted">Belgilangan tishlar:</span>
+                <span id="summary-teeth" class="font-mono font-semibold text-surgical">Ko‘rsatilmagan</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slateMuted">Biriktirilgan smeta:</span>
+                <span id="summary-estimate" class="font-mono font-bold text-ink">0 so'm</span>
+              </div>
+            </div>
+
+            <div id="summary-procedures-preview" class="hidden pt-3 border-t border-hairline">
+              <span class="text-xs font-semibold text-slateMuted block mb-1.5">Tanlangan muolajalar:</span>
+              <ul id="summary-procedures-list" class="text-xs text-ink space-y-1 font-mono"></ul>
+            </div>
+          </div>
+
+          <!-- Clinic Address & Emergency Contact -->
+          <div class="bg-white rounded-xl border border-hairline p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-base text-ink">Klinika manzili</h3>
+              <span class="font-mono text-[11px] px-2 py-0.5 rounded bg-alabaster border border-hairline text-slateMuted">SAMARQAND</span>
+            </div>
+            <p class="text-sm text-slateMuted leading-relaxed">
+              Samarqand shahri, Universitet xiyoboni, 14-uy.<br />
+              Mo‘ljal: Samarqand Davlat Universiteti bosh binosi ro‘parasi.
+            </p>
+            <div class="pt-2 border-t border-hairline flex items-center justify-between text-xs">
+              <span class="text-slateMuted">Registratura telefoni:</span>
+              <a href="tel:+998662354812" class="font-mono font-bold text-ink hover:text-surgical">+998 66 235-48-12</a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 7. FOOTER ==================== -->
+  <footer class="bg-white border-t border-hairline py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slateMuted">
+      <div>
+        <span class="font-bold text-ink">MIRZO DENTAL STUDIO</span> — Raqamli stomatologiya klinikasi.
+      </div>
+      <div class="font-mono">
+        Litsenziya № 048291 • Samarqand, O‘zbekiston
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== MODAL: DIGITAL APPOINTMENT TICKET ==================== -->
+  <div id="ticket-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-xl border border-hairline max-w-md w-full p-6 sm:p-7 shadow-xl space-y-5">
+      
+      <div id="printable-ticket-area" class="space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-hairline">
+          <div>
+            <span class="font-mono text-[11px] uppercase tracking-wider text-surgical font-bold">QABUL TASDIQLANDI</span>
+            <h3 class="text-lg font-extrabold text-ink">MIRZO DENTAL STUDIO</h3>
+          </div>
+          <span id="ticket-ref-id" class="font-mono text-sm font-bold px-2.5 py-1 rounded bg-alabaster border border-hairline text-ink">
+            #MRZ-0000
+          </span>
+        </div>
+
+        <div id="ticket-body" class="space-y-2.5 text-xs sm:text-sm">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="p-3 rounded-lg bg-alabaster border border-hairline text-[11px] text-slateMuted leading-relaxed">
+          Iltimos, qabul vaqtidan <strong class="text-ink">10 daqiqa oldin</strong> klinika registraturasiga murojaat qiling. 3D diagnostika uchun avvalgi rentgen tasvirlaringiz bo‘lsa, o‘zingiz bilan oling.
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 pt-2">
+        <button onclick="window.print()" class="flex-1 py-2.5 px-4 rounded-lg border border-hairline hover:bg-alabaster text-ink text-xs sm:text-sm font-semibold transition">
+          Chiptani chop etish / PDF
+        </button>
+        <button onclick="closeTicketModal()" class="flex-1 py-2.5 px-4 rounded-lg bg-surgical hover:bg-surgicalDark text-white text-xs sm:text-sm font-semibold transition">
+          Tayyor
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DRAWER: MY SAVED APPOINTMENTS (LOCALSTORAGE) ==================== -->
+  <div id="bookings-drawer" class="fixed inset-0 z-50 hidden">
+    <div onclick="closeMyBookingsDrawer()" class="absolute inset-0 bg-slate-900/50"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white border-l border-hairline shadow-xl flex flex-col">
+      <div class="p-5 border-b border-hairline flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-base text-ink">Mening yozuvlarim</h3>
+          <p class="text-xs text-slateMuted">Saqlangan qabul chiptalari</p>
+        </div>
+        <button onclick="closeMyBookingsDrawer()" class="p-2 rounded-lg border border-hairline text-slateMuted hover:text-ink">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div id="saved-bookings-list" class="flex-1 overflow-y-auto p-5 space-y-3">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOAST NOTIFICATION ==================== -->
+  <div id="toast-box" class="fixed bottom-5 right-5 z-50 hidden max-w-sm bg-ink text-white px-4 py-3 rounded-lg shadow-lg border border-slate-700 text-xs sm:text-sm font-medium"></div>
+
+  <!-- ==================== MODULAR VANILLA JS APPLICATION ==================== -->
+  <script>
+    // 1. CLINICAL DATA & CATALOG
+    const triageData = [
+      {
+        id: "pain",
+        label: "O‘tkir tish og‘rig‘i",
+        procedure: "Mikroskop ostida endodontik davolash (Pulpit / Periodontit)",
+        procedureId: 2,
+        doctorId: "mirzo",
+        duration: "60 daqiqa",
+        priceRange: "450 000 – 750 000 so'm",
+        note: "Og‘riqni birinchi tashrifdayoq bartaraf etish va 3D rentgen nazorati."
+      },
+      {
+        id: "hygiene",
+        label: "Tish toshlari va oqartirish",
+        procedure: "EMS Air-Flow Prophylaxis Master + Ultratovushli tozalash",
+        procedureId: 7,
+        doctorId: "nilufar",
+        duration: "45 daqiqa",
+        priceRange: "350 000 so'm",
+        note: "Emalga zarar yetkazmasdan tish karashlarini tozalash va tabiiy rangni tiklash."
+      },
+      {
+        id: "implant",
+        label: "Yo‘qolgan tish o‘rniga implant",
+        procedure: "Straumann / Osstem 3D navigatsion implantatsiya",
+        procedureId: 4,
+        doctorId: "mirzo",
+        duration: "50 daqiqa",
+        priceRange: "3 800 000 so'm dan",
+        note: "3D CBCT tomografiya asosida jarrohlik shabloni bilan aniq o‘rnatish."
+      },
+      {
+        id: "ortho",
+        label: "Tishlarni tekislash (Breket / Elayner)",
+        procedure: "Raqamli 3D skanerlash va ortodontik rejalashtirish",
+        procedureId: 6,
+        doctorId: "sardor",
+        duration: "40 daqiqa",
+        priceRange: "6 500 000 so'm dan",
+        note: "Qoliplarsiz 3D skaner orqali davolash yakunini oldindan ko‘rish imkoniyati."
+      },
+      {
+        id: "caries",
+        label: "Karies va plomba qo‘yish",
+        procedure: "Estetik anatomik restavratsiya (Estelite Asteria, Yaponiya)",
+        procedureId: 1,
+        doctorId: "nilufar",
+        duration: "45 daqiqa",
+        priceRange: "320 000 so'm",
+        note: "Tishning tabiiy shakli va rangini 100% takrorlovchi nano-kompozit plomba."
+      },
+      {
+        id: "diag",
+        label: "To‘liq tekshiruv va 3D rentgen",
+        procedure: "3D CBCT kompyuter tomografiyasi + Kengaytirilgan konsilium",
+        procedureId: 3,
+        doctorId: "mirzo",
+        duration: "30 daqiqa",
+        priceRange: "180 000 so'm",
+        note: "Barcha tishlar va jag‘ suyaklarining to‘liq raqamli diagnostika xaritasi."
+      }
+    ];
+
+    const proceduresCatalog = [
+      { id: 1, category: "Terapiya", name: "Anatomik estetik plomba (Estelite Asteria)", duration: "45 daq", price: 320000 },
+      { id: 2, category: "Terapiya", name: "Carl Zeiss mikroskopida 1 kanalni davolash", duration: "60 daq", price: 480000 },
+      { id: 3, category: "Diagnostika", name: "3D CBCT kompyuter tomografiyasi (ikkala jag‘)", duration: "15 daq", price: 180000 },
+      { id: 4, category: "Implantologiya", name: "Osstem TSIII implanti (Janubiy Koreya, kalitgacha)", duration: "50 daq", price: 3800000 },
+      { id: 5, category: "Implantologiya", name: "Sirkoniy dioksid koronka (CAD/CAM frezerlash)", duration: "40 daq", price: 1650000 },
+      { id: 6, category: "Ortodontiya", name: "O‘z-o‘zini bog‘lovchi metall breket tizimi (1 jag‘)", duration: "60 daq", price: 6500000 },
+      { id: 7, category: "Estetika va Gigiyena", name: "EMS Air-Flow + Ultratovushli kompleks gigiyena", duration: "45 daq", price: 350000 },
+      { id: 8, category: "Estetika va Gigiyena", name: "Philips Zoom 4 professional tish oqartirish", duration: "75 daq", price: 1900000 }
+    ];
+
+    const doctorsList = [
+      {
+        id: "mirzo",
+        initials: "BM",
+        name: "Dr. Bekzod Mirzayev",
+        role: "Bosh shifokor • Jarroh-implantolog",
+        experience: "11 yillik tajriba",
+        education: "Toshkent Davlat Stomatologiya Instituti, Germaniya (Frankfurt) implantologiya kursi",
+        cert: "ITI Member • 1 400+ muvaffaqiyatli implant"
+      },
+      {
+        id: "nilufar",
+        initials: "NR",
+        name: "Dr. Nilufar Rahimova",
+        role: "Terapevt-endodontist • Mikroskopist",
+        experience: "8 yillik tajriba",
+        education: "Samarqand Davlat Tibbiyot Universiteti, Carl Zeiss Endodontics sertifikati",
+        cert: "Mikroskopik endodontiya mutaxassisi"
+      },
+      {
+        id: "sardor",
+        initials: "ST",
+        name: "Dr. Sardor To‘rayev",
+        role: "Shifokor-ortodont",
+        experience: "7 yillik tajriba",
+        education: "TDSI ordinatura, Raqamli 3D elayner va breket tizimlari bo‘yicha mutaxassis",
+        cert: "3D Digital Orthodontics"
+      }
+    ];
+
+    const allTimeSlots = ["09:30", "11:00", "12:30", "14:30", "16:00", "17:30", "19:00"];
+    const occupiedSlotsByDayOffset = {
+      0: ["11:00", "14:30"],
+      1: ["09:30", "16:00"],
+      2: ["12:30"],
+      3: ["17:30"],
+      4: [],
+      5: ["11:00"],
+      6: []
+    };
+
+    // 2. APPLICATION STATE
+    let selectedTriageId = "pain";
+    let activeCalcCategory = "Barchasi";
+    let selectedProcedures = {}; // { id: quantity }
+    let selectedTeeth = new Set();
+    let bookingState = {
+      doctorId: "mirzo",
+      dayOffset: 0,
+      dateLabel: "",
+      time: "12:30"
+    };
+    let savedBookings = [];
+
+    // 3. UTILITIES
+    function formatUZS(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " so'm";
+    }
+
+    function showToast(msg) {
+      const box = document.getElementById("toast-box");
+      box.textContent = msg;
+      box.classList.remove("hidden");
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        box.classList.add("hidden");
+      }, 3000);
+    }
+
+    // 4. QUICK-TRIAGE WIDGET LOGIC
+    function renderTriage() {
+      const optionsContainer = document.getElementById("triage-options");
+      optionsContainer.innerHTML = triageData.map(item => {
+        const active = item.id === selectedTriageId;
+        return `
+          <button 
+            type="button"
+            onclick="selectTriage('${item.id}')"
+            class="text-left px-3.5 py-2.5 rounded-lg border text-xs font-semibold transition ${
+              active 
+                ? "bg-surgicalLight border-surgical text-surgicalDark" 
+                : "bg-white border-hairline text-ink hover:bg-alabaster"
+            }"
+          >
+            ${item.label}
+          </button>
+        `;
+      }).join("");
+
+      const current = triageData.find(t => t.id === selectedTriageId);
+      const doc = doctorsList.find(d => d.id === current.doctorId);
+
+      document.getElementById("triage-result").innerHTML = `
+        <div class="space-y-1">
+          <span class="font-mono text-[11px] uppercase text-slateMuted">Tavsiya etilgan muolaja:</span>
+          <div class="font-bold text-sm text-ink">${current.procedure}</div>
+          <p class="text-xs text-slateMuted leading-relaxed">${current.note}</p>
+        </div>
+        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-hairline text-xs">
+          <div>
+            <span class="text-slateMuted block">Mutaxassis:</span>
+            <span class="font-semibold text-ink">${doc.name}</span>
+          </div>
+          <div>
+            <span class="text-slateMuted block">Taxminiy narx:</span>
+            <span class="font-mono font-bold text-surgical">${current.priceRange}</span>
+          </div>
+        </div>
+        <button 
+          type="button"
+          onclick="applyTriageToBooking('${current.id}')"
+          class="w-full py-2.5 px-3 rounded-lg bg-ink hover:bg-slate-800 text-white text-xs font-semibold transition"
+        >
+          Shu yo‘nalish bo‘yicha qabulga yozilish →
+        </button>
+      `;
+    }
+
+    function selectTriage(id) {
+      selectedTriageId = id;
+      renderTriage();
+    }
+
+    function applyTriageToBooking(triageId) {
+      const item = triageData.find(t => t.id === triageId);
+      if (!item) return;
+
+      bookingState.doctorId = item.doctorId;
+      if (!selectedProcedures[item.procedureId]) {
+        selectedProcedures[item.procedureId] = 1;
+      }
+      renderEstimate();
+      renderBookingDoctors();
+      updateBookingSummary();
+
+      document.getElementById("booking").scrollIntoView({ behavior: "smooth" });
+      showToast("Yo‘nalish va mutaxassis qabul formasiga biriktirildi.");
+    }
+
+    // 5. TREATMENT CALCULATOR LOGIC
+    function renderCalcCategories() {
+      const cats = ["Barchasi", "Terapiya", "Diagnostika", "Implantologiya", "Ortodontiya", "Estetika va Gigiyena"];
+      document.getElementById("calc-categories").innerHTML = cats.map(cat => {
+        const active = cat === activeCalcCategory;
+        return `
+          <button 
+            type="button"
+            onclick="setCalcCategory('${cat}')"
+            class="px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap border transition ${
+              active 
+                ? "bg-ink text-white border-ink" 
+                : "bg-white text-slateMuted border-hairline hover:text-ink"
+            }"
+          >
+            ${cat}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function setCalcCategory(cat) {
+      activeCalcCategory = cat;
+      renderCalcCategories();
+      renderProceduresList();
+    }
+
+    function renderProceduresList() {
+      const container = document.getElementById("procedures-list");
+      const filtered = activeCalcCategory === "Barchasi" 
+        ? proceduresCatalog 
+        : proceduresCatalog.filter(p => p.category === activeCalcCategory);
+
+      container.innerHTML = filtered.map(proc => {
+        const qty = selectedProcedures[proc.id] || 0;
+        return `
+          <div class="p-4 rounded-xl border transition flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+            qty > 0 ? "border-surgical bg-surgicalLight/30" : "border-hairline bg-white"
+          }">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-[11px] px-2 py-0.5 rounded bg-alabaster border border-hairline text-slateMuted">
+                  ${proc.category}
+                </span>
+                <span class="font-mono text-[11px] text-slateMuted">⏱ ${proc.duration}</span>
+              </div>
+              <h4 class="font-bold text-sm sm:text-base text-ink">${proc.name}</h4>
+            </div>
+
+            <div class="flex items-center justify-between sm:justify-end gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-hairline">
+              <span class="font-mono font-bold text-sm text-ink tabular-nums">${formatUZS(proc.price)}</span>
+              
+              ${qty === 0 ? `
+                <button 
+                  type="button"
+                  onclick="changeProcedureQty(${proc.id}, 1)"
+                  class="px-3.5 py-2 rounded-lg border border-hairline bg-white hover:border-surgical hover:text-surgical text-xs font-semibold transition"
+                >
+                  + Qo‘shish
+                </button>
+              ` : `
+                <div class="inline-flex items-center border border-surgical rounded-lg bg-white overflow-hidden">
+                  <button type="button" onclick="changeProcedureQty(${proc.id}, -1)" class="px-2.5 py-1.5 text-xs font-bold text-ink hover:bg-alabaster">−</button>
+                  <span class="px-2.5 py-1.5 font-mono text-xs font-bold text-surgical">${qty}</span>
+                  <button type="button" onclick="changeProcedureQty(${proc.id}, 1)" class="px-2.5 py-1.5 text-xs font-bold text-ink hover:bg-alabaster">+</button>
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function changeProcedureQty(id, delta) {
+      const next = (selectedProcedures[id] || 0) + delta;
+      if (next <= 0) {
+        delete selectedProcedures[id];
+      } else {
+        selectedProcedures[id] = next;
+      }
+      renderProceduresList();
+      renderEstimate();
+      updateBookingSummary();
+    }
+
+    function clearCalculator() {
+      selectedProcedures = {};
+      renderProceduresList();
+      renderEstimate();
+      updateBookingSummary();
+    }
+
+    function calculateTotalEstimate() {
+      let total = 0;
+      Object.entries(selectedProcedures).forEach(([id, qty]) => {
+        const proc = proceduresCatalog.find(p => p.id === Number(id));
+        if (proc) total += proc.price * qty;
+      });
+      return total;
+    }
+
+    function renderEstimate() {
+      const container = document.getElementById("estimate-items");
+      const entries = Object.entries(selectedProcedures);
+
+      if (entries.length === 0) {
+        container.innerHTML = `
+          <div class="py-6 text-center text-xs text-slateMuted border border-dashed border-hairline rounded-lg bg-white">
+            Smeta bo‘sh. Chap ro‘yxatdan kerakli muolajalarni qo‘shing.
+          </div>
+        `;
+      } else {
+        container.innerHTML = entries.map(([id, qty]) => {
+          const proc = proceduresCatalog.find(p => p.id === Number(id));
+          return `
+            <div class="flex items-start justify-between gap-2 text-xs bg-white p-2.5 rounded-lg border border-hairline">
+              <div>
+                <span class="font-semibold text-ink block">${proc.name}</span>
+                <span class="font-mono text-slateMuted">${qty} x ${formatUZS(proc.price)}</span>
+              </div>
+              <span class="font-mono font-bold text-ink shrink-0 tabular-nums">${formatUZS(proc.price * qty)}</span>
+            </div>
+          `;
+        }).join("");
+      }
+
+      const total = calculateTotalEstimate();
+      document.getElementById("estimate-total").textContent = formatUZS(total);
+
+      const isInstallment = document.getElementById("installment-toggle").checked;
+      const breakdownEl = document.getElementById("installment-breakdown");
+      if (isInstallment && total > 0) {
+        breakdownEl.classList.remove("hidden");
+        document.getElementById("installment-monthly").textContent = formatUZS(Math.ceil(total / 3)) + " / oy";
+      } else {
+        breakdownEl.classList.add("hidden");
+      }
+    }
+
+    function transferEstimateToBooking() {
+      updateBookingSummary();
+      document.getElementById("booking").scrollIntoView({ behavior: "smooth" });
+      showToast("Smeta qabul formasiga o‘tkazildi.");
+    }
+
+    // 6. INTERACTIVE FDI DENTAL ARCH (32 TEETH)
+    function renderDentalArch() {
+      const layer = document.getElementById("teeth-layer");
+      // Upper Right (18..11), Upper Left (21..28)
+      const upperTeeth = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
+      // Lower Right (48..41), Lower Left (31..38)
+      const lowerTeeth = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
+
+      let svgMarkup = "";
+
+      upperTeeth.forEach((num, idx) => {
+        const x = 24 + idx * 39 + (idx >= 8 ? 14 : 0);
+        const y = 44;
+        const isSelected = selectedTeeth.has(num);
+        svgMarkup += `
+          <g class="tooth-node ${isSelected ? "selected" : ""}" onclick="toggleTooth(${num})">
+            <rect x="${x}" y="${y}" width="32" height="54" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" />
+            <text x="${x + 16}" y="${y + 31}" text-anchor="middle" fill="#0F172A" font-size="11" font-family="JetBrains Mono">${num}</text>
+          </g>
+        `;
+      });
+
+      lowerTeeth.forEach((num, idx) => {
+        const x = 24 + idx * 39 + (idx >= 8 ? 14 : 0);
+        const y = 148;
+        const isSelected = selectedTeeth.has(num);
+        svgMarkup += `
+          <g class="tooth-node ${isSelected ? "selected" : ""}" onclick="toggleTooth(${num})">
+            <rect x="${x}" y="${y}" width="32" height="54" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" />
+            <text x="${x + 16}" y="${y + 31}" text-anchor="middle" fill="#0F172A" font-size="11" font-family="JetBrains Mono">${num}</text>
+          </g>
+        `;
+      });
+
+      layer.innerHTML = svgMarkup;
+      renderSelectedTeethUI();
+    }
+
+    function toggleTooth(num) {
+      if (selectedTeeth.has(num)) {
+        selectedTeeth.delete(num);
+      } else {
+        selectedTeeth.add(num);
+      }
+      renderDentalArch();
+      updateBookingSummary();
+    }
+
+    function clearSelectedTeeth() {
+      selectedTeeth.clear();
+      renderDentalArch();
+      updateBookingSummary();
+    }
+
+    function renderSelectedTeethUI() {
+      const sorted = Array.from(selectedTeeth).sort((a, b) => a - b);
+      const badgesBox = document.getElementById("selected-teeth-badges");
+      const estBox = document.getElementById("estimate-teeth-box");
+      const estList = document.getElementById("estimate-teeth-list");
+
+      if (sorted.length === 0) {
+        badgesBox.innerHTML = `<span class="text-xs text-slateMuted italic">Hali tish tanlanmagan</span>`;
+        estBox.classList.add("hidden");
+      } else {
+        badgesBox.innerHTML = sorted.map(n => `
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surgicalLight border border-surgical text-surgicalDark font-mono text-xs font-bold">
+            #${n}
+            <button type="button" onclick="toggleTooth(${n})" class="hover:text-ink">×</button>
+          </span>
+        `).join("");
+        estBox.classList.remove("hidden");
+        estList.textContent = sorted.map(n => `#${n}`).join(", ");
+      }
+    }
+
+    // 7. DOCTORS ROSTER
+    function renderDoctorsSection() {
+      document.getElementById("doctors-grid").innerHTML = doctorsList.map(doc => `
+        <div class="p-6 rounded-xl border border-hairline bg-alabaster flex flex-col justify-between space-y-5">
+          <div class="space-y-4">
+            <div class="flex items-center gap-3.5">
+              <div class="w-12 h-12 rounded-lg bg-ink text-white font-mono font-bold text-sm flex items-center justify-center border border-slate-700">
+                ${doc.initials}
+              </div>
+              <div>
+                <h3 class="font-bold text-base text-ink">${doc.name}</h3>
+                <span class="text-xs text-surgical font-semibold block">${doc.role}</span>
+              </div>
+            </div>
+            <p class="text-xs text-slateMuted leading-relaxed">${doc.education}</p>
+          </div>
+
+          <div class="pt-4 border-t border-hairline space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-mono text-slateMuted">${doc.experience}</span>
+              <span class="font-mono text-[11px] text-ink font-semibold">${doc.cert}</span>
+            </div>
+            <button 
+              type="button"
+              onclick="bookSpecificDoctor('${doc.id}')"
+              class="w-full py-2 px-3 rounded-lg bg-white hover:bg-ink text-ink hover:text-white border border-hairline text-xs font-semibold transition"
+            >
+              Ushbu shifokorga yozilish
+            </button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function bookSpecificDoctor(docId) {
+      bookingState.doctorId = docId;
+      renderBookingDoctors();
+      updateBookingSummary();
+      document.getElementById("booking").scrollIntoView({ behavior: "smooth" });
+    }
+
+    // 8. APPOINTMENT BOOKING SYSTEM & LOCALSTORAGE
+    function renderBookingDoctors() {
+      document.getElementById("booking-doctors-list").innerHTML = doctorsList.map(doc => {
+        const active = doc.id === bookingState.doctorId;
+        return `
+          <button 
+            type="button"
+            onclick="selectBookingDoctor('${doc.id}')"
+            class="p-3 rounded-lg border text-left transition ${
+              active 
+                ? "border-surgical bg-surgicalLight/50" 
+                : "border-hairline bg-white hover:bg-alabaster"
+            }"
+          >
+            <div class="font-bold text-xs text-ink">${doc.name}</div>
+            <div class="text-[11px] text-slateMuted truncate mt-0.5">${doc.role.split("•")[0]}</div>
+          </button>
+        `;
+      }).join("");
+    }
+
+    function selectBookingDoctor(id) {
+      bookingState.doctorId = id;
+      renderBookingDoctors();
+      updateBookingSummary();
+    }
+
+    function renderBookingDates() {
+      const weekdays = ["Yak", "Dush", "Sesh", "Chor", "Pay", "Jum", "Shan"];
+      const months = ["yan", "fev", "mar", "apr", "may", "iyun", "iyul", "avg", "sen", "okt", "noy", "dek"];
+      const container = document.getElementById("booking-dates-list");
+      let html = "";
+
+      for (let i = 0; i < 7; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() + i);
+        const dayNum = d.getDate();
+        const monthName = months[d.getMonth()];
+        const weekdayName = i === 0 ? "Bugun" : weekdays[d.getDay()];
+        const label = `${dayNum} ${monthName}`;
+
+        if (i === bookingState.dayOffset) {
+          bookingState.dateLabel = `${label} (${weekdayName})`;
+        }
+
+        const active = i === bookingState.dayOffset;
+        html += `
+          <button 
+            type="button"
+            onclick="selectBookingDate(${i}, '${label} (${weekdayName})')"
+            class="py-2.5 px-2 rounded-lg border text-center transition ${
+              active 
+                ? "bg-ink text-white border-ink" 
+                : "bg-white text-ink border-hairline hover:bg-alabaster"
+            }"
+          >
+            <span class="block text-[10px] ${active ? "text-slate-300" : "text-slateMuted"}">${weekdayName}</span>
+            <span class="font-mono text-xs font-bold block mt-0.5">${dayNum} ${monthName}</span>
+          </button>
+        `;
+      }
+      container.innerHTML = html;
+    }
+
+    function selectBookingDate(offset, label) {
+      bookingState.dayOffset = offset;
+      bookingState.dateLabel = label;
+
+      const occupied = occupiedSlotsByDayOffset[offset] || [];
+      if (occupied.includes(bookingState.time)) {
+        bookingState.time = allTimeSlots.find(t => !occupied.includes(t)) || "09:30";
+      }
+
+      renderBookingDates();
+      renderBookingTimes();
+      updateBookingSummary();
+    }
+
+    function renderBookingTimes() {
+      const occupied = occupiedSlotsByDayOffset[bookingState.dayOffset] || [];
+      document.getElementById("booking-times-list").innerHTML = allTimeSlots.map(slot => {
+        const isOccupied = occupied.includes(slot);
+        const isSelected = slot === bookingState.time && !isOccupied;
+
+        if (isOccupied) {
+          return `
+            <button type="button" disabled class="py-2 rounded-lg bg-slate-100 border border-hairline font-mono text-xs text-slate-400 line-through cursor-not-allowed">
+              ${slot}
+            </button>
+          `;
+        }
+        return `
+          <button 
+            type="button"
+            onclick="selectBookingTime('${slot}')"
+            class="py-2 rounded-lg border font-mono text-xs font-semibold transition ${
+              isSelected 
+                ? "bg-surgical text-white border-surgical" 
+                : "bg-white text-ink border-hairline hover:border-surgical"
+            }"
+          >
+            ${slot}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function selectBookingTime(slot) {
+      bookingState.time = slot;
+      renderBookingTimes();
+      updateBookingSummary();
+    }
+
+    function updateBookingSummary() {
+      const doc = doctorsList.find(d => d.id === bookingState.doctorId);
+      document.getElementById("summary-doctor").textContent = doc ? doc.name : "—";
+      document.getElementById("summary-datetime").textContent = `${bookingState.dateLabel} • ${bookingState.time}`;
+
+      const sortedTeeth = Array.from(selectedTeeth).sort((a, b) => a - b);
+      document.getElementById("summary-teeth").textContent = sortedTeeth.length > 0 
+        ? sortedTeeth.map(n => `#${n}`).join(", ") 
+        : "Ko‘rsatilmagan";
+
+      const total = calculateTotalEstimate();
+      document.getElementById("summary-estimate").textContent = formatUZS(total);
+
+      const entries = Object.entries(selectedProcedures);
+      const previewBox = document.getElementById("summary-procedures-preview");
+      const previewList = document.getElementById("summary-procedures-list");
+
+      if (entries.length > 0) {
+        previewBox.classList.remove("hidden");
+        previewList.innerHTML = entries.map(([id, qty]) => {
+          const p = proceduresCatalog.find(item => item.id === Number(id));
+          return `<li>• ${qty}x ${p.name}</li>`;
+        }).join("");
+      } else {
+        previewBox.classList.add("hidden");
+      }
+    }
+
+    // Uzbek Phone Mask (+998 (XX) XXX-XX-XX)
+    function formatUzbekPhone(input) {
+      let digits = input.value.replace(/\D/g, "");
+      if (digits.startsWith("998")) {
+        digits = digits.slice(3);
+      }
+      digits = digits.slice(0, 9);
+
+      let formatted = "+998";
+      if (digits.length > 0) formatted += " (" + digits.slice(0, 2);
+      if (digits.length >= 2) formatted += ") " + digits.slice(2, 5);
+      if (digits.length >= 5) formatted += "-" + digits.slice(5, 7);
+      if (digits.length >= 7) formatted += "-" + digits.slice(7, 9);
+
+      input.value = formatted;
+    }
+
+    function handleBookingSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("patient-name").value.trim();
+      const phone = document.getElementById("patient-phone").value.trim();
+      const note = document.getElementById("patient-note").value.trim();
+
+      if (phone.replace(/\D/g, "").length < 12) {
+        showToast("Iltimos, to‘liq telefon raqamingizni kiriting.");
+        return;
+      }
+
+      const doc = doctorsList.find(d => d.id === bookingState.doctorId);
+      const refId = "#MRZ-" + Math.floor(1000 + Math.random() * 9000);
+      const sortedTeeth = Array.from(selectedTeeth).sort((a, b) => a - b);
+      const total = calculateTotalEstimate();
+
+      const ticketRecord = {
+        id: refId,
+        patientName: name,
+        phone: phone,
+        doctorName: doc.name,
+        dateTime: `${bookingState.dateLabel}, ${bookingState.time}`,
+        teeth: sortedTeeth.length > 0 ? sortedTeeth.map(n => `#${n}`).join(", ") : "Ko‘rsatilmagan",
+        totalEstimate: formatUZS(total),
+        note: note || "—"
+      };
+
+      // Save to localStorage
+      savedBookings.unshift(ticketRecord);
+      localStorage.setItem("mirzo_dental_bookings", JSON.stringify(savedBookings));
+      updateSavedBookingsUI();
+
+      // Mark slot occupied in current session
+      if (!occupiedSlotsByDayOffset[bookingState.dayOffset]) {
+        occupiedSlotsByDayOffset[bookingState.dayOffset] = [];
+      }
+      occupiedSlotsByDayOffset[bookingState.dayOffset].push(bookingState.time);
+      renderBookingTimes();
+
+      // Render Ticket Modal
+      document.getElementById("ticket-ref-id").textContent = ticketRecord.id;
+      document.getElementById("ticket-body").innerHTML = `
+        <div class="flex justify-between py-1.5 border-b border-hairline">
+          <span class="text-slateMuted">Bemor:</span>
+          <span class="font-bold text-ink">${ticketRecord.patientName}</span>
+        </div>
+        <div class="flex justify-between py-1.5 border-b border-hairline">
+          <span class="text-slateMuted">Telefon:</span>
+          <span class="font-mono text-ink">${ticketRecord.phone}</span>
+        </div>
+        <div class="flex justify-between py-1.5 border-b border-hairline">
+          <span class="text-slateMuted">Shifokor:</span>
+          <span class="font-semibold text-ink">${ticketRecord.doctorName}</span>
+        </div>
+        <div class="flex justify-between py-1.5 border-b border-hairline">
+          <span class="text-slateMuted">Qabul vaqti:</span>
+          <span class="font-mono font-bold text-surgical">${ticketRecord.dateTime}</span>
+        </div>
+        <div class="flex justify-between py-1.5 border-b border-hairline">
+          <span class="text-slateMuted">Tishlar (FDI):</span>
+          <span class="font-mono text-ink">${ticketRecord.teeth}</span>
+        </div>
+        <div class="flex justify-between py-1.5">
+          <span class="text-slateMuted">Dastlabki smeta:</span>
+          <span class="font-mono font-bold text-ink">${ticketRecord.totalEstimate}</span>
+        </div>
+      `;
+
+      const modal = document.getElementById("ticket-modal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+
+      document.getElementById("appointment-form").reset();
+    }
+
+    function closeTicketModal() {
+      const modal = document.getElementById("ticket-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    // 9. LOCALSTORAGE BOOKINGS DRAWER
+    function loadSavedBookings() {
+      try {
+        const raw = localStorage.getItem("mirzo_dental_bookings");
+        savedBookings = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        savedBookings = [];
+      }
+      updateSavedBookingsUI();
+    }
+
+    function updateSavedBookingsUI() {
+      document.getElementById("saved-bookings-count").textContent = savedBookings.length;
+      const list = document.getElementById("saved-bookings-list");
+
+      if (savedBookings.length === 0) {
+        list.innerHTML = `
+          <div class="text-center py-12 text-xs text-slateMuted border border-dashed border-hairline rounded-lg">
+            Hozircha saqlangan qabul chiptalari mavjud emas.
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = savedBookings.map((b, idx) => `
+        <div class="p-4 rounded-xl bg-alabaster border border-hairline space-y-2 text-xs">
+          <div class="flex items-center justify-between">
+            <span class="font-mono font-bold text-surgical">${b.id}</span>
+            <button type="button" onclick="cancelSavedBooking(${idx})" class="text-slateMuted hover:text-red-600 font-medium">
+              Bekor qilish
+            </button>
+          </div>
+          <div class="font-bold text-sm text-ink">${b.doctorName}</div>
+          <div class="font-mono text-ink">${b.dateTime}</div>
+          <div class="text-slateMuted">Bemor: ${b.patientName} (${b.phone})</div>
+          <div class="pt-2 border-t border-hairline flex justify-between font-mono">
+            <span>Tishlar: ${b.teeth}</span>
+            <span class="font-bold text-ink">${b.totalEstimate}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function cancelSavedBooking(index) {
+      savedBookings.splice(index, 1);
+      localStorage.setItem("mirzo_dental_bookings", JSON.stringify(savedBookings));
+      updateSavedBookingsUI();
+      showToast("Qabul yozuvi bekor qilindi.");
+    }
+
+    function openMyBookingsDrawer() {
+      document.getElementById("bookings-drawer").classList.remove("hidden");
+    }
+
+    function closeMyBookingsDrawer() {
+      document.getElementById("bookings-drawer").classList.add("hidden");
+    }
+
+    function toggleMobileNav() {
+      document.getElementById("mobile-nav").classList.toggle("hidden");
+    }
+
+    // 10. INITIALIZE APPLICATION
+    window.addEventListener("DOMContentLoaded", () => {
+      renderTriage();
+      renderCalcCategories();
+      renderProceduresList();
+      renderEstimate();
+      renderDentalArch();
+      renderDoctorsSection();
+      renderBookingDoctors();
+      renderBookingDates();
+      renderBookingTimes();
+      updateBookingSummary();
+      loadSavedBookings();
+    });
+  </script>
+</body>
+</html>
